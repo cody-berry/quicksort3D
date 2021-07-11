@@ -55,7 +55,8 @@ def recursive_quicksort(arr, start, stop):
     recursive_quicksort(arr, ltp+1, stop)
 
 
-# * iterative_quicksort goes here:
+# There are yields here because we are going to visualize it. In order to see changes over time
+# we have to place yields to call the .next() on the generator.
 def iterative_quicksort(arr, start, stop):
     # Call stack to keep track of calls:
     call_stack = [(start, stop)]    
@@ -119,7 +120,7 @@ def setup():
     global len_list, lst, sorter
     size(1000, 200)
     colorMode(HSB, 360, 100, 100, 100)
-    len_list = 2000
+    len_list = 100
     lst = []
     for i in range(0, len_list):
         lst.append(randint(55, 100))
