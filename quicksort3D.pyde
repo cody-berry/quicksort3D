@@ -3,10 +3,12 @@
 #
 # v0.1 recursive quicksort in console *
 # v0.2 iterative quicksort in console *
-# v0.3 visualize iterative quicksort with rect() and yield+generators
-# v0.4 element class for colors
-# v0.5 3D boxes
+# v0.3 visualize iterative quicksort with rect() and yield+generators *
+# v0.4 element class for colors *
+# v0.5 3D boxes +++
 
+# Add PeasyCam
+add_library("PeasyCam")
 
 # Import from random; important for sort
 from random import *
@@ -153,11 +155,12 @@ def iterative_quicksort(arr, start, stop):
 
 
 def setup():
-    global len_list, lst, sorter
-    size(1000, 200)
+    global len_list, lst, sorter, cam
+    size(700, 200, P3D)
     colorMode(HSB, 360, 100, 100, 100)
-    len_list = 150
+    len_list = 100
     lst = []
+    cam = PeasyCam(this, width/2, height/2, 0, 300)
     for i in range(0, len_list):
         lst.append(Element(randint(55, 100)))
         # We need to create a generator so we can call .next() to see updates to the sorting.
@@ -180,7 +183,7 @@ def draw():
     background(209, 95, 66)
     noStroke()
     
-    spacing = 3 # len_list needs to be a multiple of len_list-spacing
+    spacing = 0
     
     
     # Visualizes the list to see changes to the sort over time with rectangles.
