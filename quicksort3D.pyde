@@ -72,11 +72,11 @@ def iterative_quicksort(arr, start, stop):
         start, stop = call_stack.pop()
         for i in range(start, stop):
             if i > stop and i < start:
-                lst[i].c = (13, 2, 50)
+                lst[i].c = color(13, 2, 50, 69)
         if start <= len_list - 1:
-            lst[start].c = color(151, 99, 50)
+            lst[start].c = color(151, 99, 50, 69)
         if stop >= 0:
-            lst[stop].c = color(185, 85, 50)
+            lst[stop].c = color(185, 85, 50, 69)
         yield
         if(start >= stop):
             if start <= len_list - 1:
@@ -87,7 +87,7 @@ def iterative_quicksort(arr, start, stop):
         
         # Otherwise, we select a pivot index, piv_idx
         piv_idx = randint(start, stop)
-        arr[piv_idx].c = color(65, 86, 94)
+        arr[piv_idx].c = color(65, 86, 94, 69)
         yield
         
         # Then, select a pivot element, which we will use to compare to other elements, or 
@@ -95,8 +95,8 @@ def iterative_quicksort(arr, start, stop):
         piv_ele = arr[piv_idx]
         
         # Not nessecary until we randomize the pivot element.
-        arr[piv_idx].c = color(341, 46, 93)
-        arr[stop].c = color(341, 46, 93)
+        arr[piv_idx].c = color(341, 46, 93, 69)
+        arr[stop].c = color(341, 46, 93, 69)
         arr[piv_idx], arr[stop] = arr[stop], arr[piv_idx]
         yield
         
@@ -104,7 +104,7 @@ def iterative_quicksort(arr, start, stop):
         # seperate the list when we recurse.
         ltp = start
         arr[piv_idx].reset_color()
-        arr[stop].c = color(65, 86, 94)
+        arr[stop].c = color(65, 86, 94, 69)
         yield
         
         # Moving through the list
@@ -112,8 +112,8 @@ def iterative_quicksort(arr, start, stop):
             if(arr[i] < piv_ele):
                 # Oh no! We've found an element out of place! We need to swap that into the 
                 # correct place. 
-                arr[i].c = color(341, 46, 93)
-                arr[ltp].c = color(341, 46, 93)
+                arr[i].c = color(341, 46, 93, 69)
+                arr[ltp].c = color(341, 46, 93, 69)
                 arr[i], arr[ltp] = arr[ltp], arr[i]
                 yield
                 
@@ -122,14 +122,14 @@ def iterative_quicksort(arr, start, stop):
                 ltp += 1
                 arr[i].reset_color()
                 arr[ltp].reset_color()
-                arr[start].c = color(151, 99, 50)
+                arr[start].c = color(151, 99, 50, 69)
                 yield
                 
         # Now we can swap the pivot element to the lesser than pointer, ltp, so that everything
         # lesser than the pivot is to the left of it and everything greater than it is to the 
         # right of it.
-        arr[ltp].c = color(341, 46, 93)
-        arr[stop].c = color(341, 46, 93)
+        arr[ltp].c = color(341, 46, 93, 69)
+        arr[stop].c = color(341, 46, 93, 69)
         arr[ltp], arr[stop] = arr[stop], arr[ltp]
         yield
         
@@ -144,7 +144,7 @@ def iterative_quicksort(arr, start, stop):
         
         call_stack.append((start, ltp-1))
         arr[stop].reset_color()
-        arr[ltp].c = color(65, 86, 94)
+        arr[ltp].c = color(65, 86, 94, 69)
         yield
         call_stack.append((ltp+1, stop))
         
@@ -156,20 +156,20 @@ def iterative_quicksort(arr, start, stop):
 
 def setup():
     global len_list, lst, sorter, cam
-    size(700, 200, P3D)
+    size(700, 700, P3D)
     colorMode(HSB, 360, 100, 100, 100)
     len_list = 100
     lst = []
-    cam = PeasyCam(this, width/2, height/2, 0, 300)
+    cam = PeasyCam(this, width/2, height/2, 0, 500)
     for i in range(0, len_list):
-        lst.append(Element(randint(55, 100)))
+        lst.append(Element(randint(0, 100)))
         # We need to create a generator so we can call .next() to see updates to the sorting.
         sorter = iterative_quicksort(lst, 0, len(lst)-1)
         
     
     # TODO: bug. this relationship should be linear, not exponential
     # frameRate(7**(len_list/67))
-    frameRate(len_list/2)
+    frameRate(len_list)
     
     # TODO: Fix error: Every few blocks, instead of having a background line between, 
     # they'll look squished together. Maybe this is a rounding error from division. We can 
@@ -189,11 +189,15 @@ def draw():
     # Visualizes the list to see changes to the sort over time with rectangles.
     for i in range(0, len(lst)):
         fill(lst[i].c)
-        # For the top one, the corner that we actually place the
-        rect(i*round((width - spacing*2)/len_list) + spacing,
-             height - 50 - lst[i].value, 
-             (width - spacing*2)/len_list-1, 
-             lst[i].value)
+        pushMatrix()
+        # For the box, we will need to translate because the box only takes in the size, 
+        # or else the arguments will be too crazy.
+        translate((i+3/2)*round((width - spacing*2)/len_list) + spacing, 
+                  height/2 - floor(lst[i].value/2), 0)
+        
+        box((width - spacing*2)/len_list-1,
+             ceil(lst[i].value/2)*2, 100)
+        popMatrix()
         
     try:
         sorter.next()
