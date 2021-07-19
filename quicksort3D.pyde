@@ -72,17 +72,21 @@ def iterative_quicksort(arr, start, stop):
         start, stop = call_stack.pop()
         for i in range(start, stop):
             if i > stop and i < start:
-                lst[i].c = color(13, 2, 50, 69)
+                lst[i].c = color(13, 2, 25, 69)
         if start <= len_list - 1:
             lst[start].c = color(151, 99, 50, 69)
         if stop >= 0:
             lst[stop].c = color(185, 85, 50, 69)
         yield
-        if(start >= stop):
+        if start >= stop:
             if start <= len_list - 1:
                 lst[start].reset_color()
-            if start >= 0:
+            if stop >= 0:
                 lst[stop].reset_color()
+            for i in range(start, len(arr)):
+                if(i) >= 0:
+                    lst[i].done = True
+                    yield
             continue
         
         # Otherwise, we select a pivot index, piv_idx
@@ -169,7 +173,10 @@ def setup():
     
     # TODO: bug. this relationship should be linear, not exponential
     # frameRate(7**(len_list/67))
-    frameRate(len_list)
+    if len_list > 10:
+        frameRate(len_list)
+    else:
+        frameRate(10)
     
     # TODO: Fix error: Every few blocks, instead of having a background line between, 
     # they'll look squished together. Maybe this is a rounding error from division. We can 
@@ -184,10 +191,15 @@ def draw():
     noStroke()
     
     spacing = 0
+    average = 0
+    for i in range(0, len_list):
+        average += lst[i].value
+    
+    average /= len_list
     
     
     # Visualizes the list to see changes to the sort over time with rectangles.
-    for i in range(0, len(lst)):
+    for i in range(0, len_list):
         fill(lst[i].c)
         pushMatrix()
         # For the box, we will need to translate because the box only takes in the size, 
@@ -199,10 +211,21 @@ def draw():
              ceil(lst[i].value/2)*2, 100)
         popMatrix()
         
+        if lst[i].done:
+            pushMatrix()
+            fill(107, 78, 86, 40)
+            translate((i+3/2)*round((width - spacing*2)/len_list) + spacing, 
+                      height/2 + 5, 0)
+        
+            box((width - spacing*2)/len_list-1, 
+            10, 100)
+            popMatrix()
+        
     try:
         sorter.next()
     except StopIteration:
-        pass
+        for i in range(0, len_list):
+            print(lst[i].done)
         
     
     
