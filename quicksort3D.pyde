@@ -162,7 +162,7 @@ def setup():
     global len_list, lst, sorter, cam
     size(1400, 700, P3D)
     colorMode(HSB, 360, 100, 100, 100)
-    len_list = 100
+    len_list = 50
     lst = []
     cam = PeasyCam(this, 0, 0, 0, 500)
     for i in range(0, len_list):
@@ -187,22 +187,19 @@ def setup():
 
 def draw():
     global len_list, lst, sorter
-    background(209, 95, 66)
+    background(209, 95, 23)
     noStroke()
-    
-    average = 0
-    for i in range(0, len_list):
-        average += lst[i].value
-    
-    average /= len_list
+    # The reason why we need the BOX_HEIGHT_SCALE to be a scale is because if it were a
+    # constant, then the sort wouldn't be amazing because there would be no swaps.
+    # In this case, I wasn't able to make the bottom blocks aligned while still 
+    # keeping the height scale non-doubled, so the BOX_HEIGHT_SCALE assignment
+    # will be half as much as the real value.
     
     BOX_WIDTH = 5
-    # The reason why we need the box_height_scale to be a scale is because if it were a
-    # constant, then the sort wouldn't be amazing because there would be no swaps.
     BOX_HEIGHT_SCALE = 1
     BOX_DEPTH = 50
     # I call the boxes underneath representing that the element box is done a donebox.
-    EXTRA_DONEBOX_THICKNESS = 2
+    DONEBOX_HEIGHT = BOX_WIDTH/2
     
     
     # Visualizes the list to see changes to the sort over time with rectangles.
@@ -212,11 +209,11 @@ def draw():
         # For the box, we will need to translate because the box only takes in the size, 
         # or else the arguments will be too crazy.
         
-        # Because the box defaults to 0, 0, you need to translate or else the box with the 
-        # maximum height will only show up. Defaulting to 0, 0, means that if you try to not 
-        # translate at all, then you will end up with the center being 0, 0.
-        translate(i*BOX_WIDTH, -lst[i].value/2*BOX_HEIGHT_SCALE, 0)        
-        box(BOX_WIDTH, lst[i].value*BOX_HEIGHT_SCALE, BOX_DEPTH)
+        # Because the box defaults to (0, 0), you need to translate or else the box with the 
+        # maximum height will only show up. Defaulting to (0, 0) means that if you try to not 
+        # translate at all, then you will end up with the center being (0, 0).
+        translate(i*BOX_WIDTH, -lst[i].value*BOX_HEIGHT_SCALE, 0)        
+        box(BOX_WIDTH, lst[i].value*2*BOX_HEIGHT_SCALE, BOX_DEPTH)
         popMatrix()
         
         if lst[i].done:
@@ -224,10 +221,8 @@ def draw():
             fill(107, 78, 86, 40)
             # Same as last comment, the default with not translated will be at the center. 
             # Same when you translate!
-            # If you don't make the green one more pixel thick, then when you zoom in close, 
-            # you see 
-            translate(i*BOX_WIDTH, BOX_HEIGHT_SCALE/2 + EXTRA_DONEBOX_THICKNESS*2, 0)            
-            box(BOX_WIDTH, BOX_HEIGHT_SCALE + EXTRA_DONEBOX_THICKNESS, BOX_DEPTH)    
+            translate(i*BOX_WIDTH, DONEBOX_HEIGHT,  0)
+            box(BOX_WIDTH, DONEBOX_HEIGHT*2, BOX_DEPTH)
             popMatrix()
         
     try:
