@@ -5,7 +5,10 @@
 # v0.2 iterative quicksort in console *
 # v0.3 visualize iterative quicksort with rect() and yield+generators *
 # v0.4 element class for colors *
-# v0.5 3D boxes +++
+# v0.5 3D boxes *
+# v0.6 green done indicator boxes *
+# v0.6.1 fix vertical alignment bug. clean up code
+# v0.7 
 
 # Add PeasyCam
 add_library("PeasyCam")
