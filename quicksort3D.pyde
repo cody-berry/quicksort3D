@@ -1,14 +1,14 @@
 # 2021.07.08 Cody
 # quicksort3D
 #
-# v0.1 recursive quicksort in console *
-# v0.2 iterative quicksort in console *
-# v0.3 visualize iterative quicksort with rect() and yield+generators *
-# v0.4 element class for colors *
-# v0.5 3D boxes *
-# v0.6 green done indicator boxes *
-# v0.6.1 fix vertical alignment bug. clean up code
-# v0.7 
+# v0.1   recursive quicksort in console *
+# v0.2   iterative quicksort in console *
+# v0.3   visualize iterative quicksort with rect() and yield+generators *
+# v0.4   element class for colors *
+# v0.5   3D boxes *
+# v0.6   green done indicator boxes *
+# v0.6.1 fix vertical alignment bug. clean up code *
+# v0.7   replace green done indicator boxes with checkmark fragments
 
 # Add PeasyCam
 add_library("PeasyCam")
@@ -165,7 +165,7 @@ def setup():
     global len_list, lst, sorter, cam
     size(1400, 700, P3D)
     colorMode(HSB, 360, 100, 100, 100)
-    len_list = 50
+    len_list = 40
     lst = []
     cam = PeasyCam(this, 0, 0, 0, 500)
     for i in range(0, len_list):
@@ -200,9 +200,15 @@ def draw():
     
     BOX_WIDTH = 5
     BOX_HEIGHT_SCALE = 1
-    BOX_DEPTH = 50
+    BOX_DEPTH = 0
+    BOX_WIDTH_SPACING = 1
     # I call the boxes underneath representing that the element box is done a donebox.
     DONEBOX_HEIGHT = BOX_WIDTH/2
+    CHECKMARK_BASE = 200  # Base of the checkmark
+    CHECKMARK_HEIGHT = 20  # Height of the checkmark fragment
+    # The y difference between each fragment. Note that it will become negative once 
+    # the checkmark reaches less than lst[i]/3 though.
+    CHECKMARK_FRAGMENT_Y_DIFFERENCE = 5 
     
     
     # Visualizes the list to see changes to the sort over time with rectangles.
@@ -215,18 +221,43 @@ def draw():
         # Because the box defaults to (0, 0), you need to translate or else the box with the 
         # maximum height will only show up. Defaulting to (0, 0) means that if you try to not 
         # translate at all, then you will end up with the center being (0, 0).
-        translate(i*BOX_WIDTH, -lst[i].value*BOX_HEIGHT_SCALE, 0)        
+        translate(i*BOX_WIDTH+i*BOX_WIDTH_SPACING, -lst[i].value*BOX_HEIGHT_SCALE, 0)        
         box(BOX_WIDTH, lst[i].value*2*BOX_HEIGHT_SCALE, BOX_DEPTH)
         popMatrix()
         
+        
+        # green underline mode:
+        #if lst[i].done:
+            #pushMatrix()
+            #fill(107, 78, 86, 40)
+            ## Same as last comment, the default with not translated will be at the center. 
+            ## Same when you translate!
+            #translate(i*BOX_WIDTH+i*BOX_WIDTH_SPACING, DONEBOX_HEIGHT,  0)
+            #box(BOX_WIDTH, DONEBOX_HEIGHT*2, BOX_DEPTH)
+            #popMatrix()
+            
+        # checkmark fragment mode:
         if lst[i].done:
-            pushMatrix()
             fill(107, 78, 86, 40)
-            # Same as last comment, the default with not translated will be at the center. 
-            # Same when you translate!
-            translate(i*BOX_WIDTH, DONEBOX_HEIGHT,  0)
-            box(BOX_WIDTH, DONEBOX_HEIGHT*2, BOX_DEPTH)
-            popMatrix()
+        else:
+            fill(0, 78, 86, 40)
+        
+        # CHECKMARK_Y is the center of the checkmark at the y axis. Most checkmarks have a tip at the bottom
+        # and I'm representing the tip as a bend in the abs() function. In desmos, you'll see that no matter
+        # how close you zoom in to the point (0, 0), it is still a sharp point, so that's what representing
+        # the tip here. Also, to ensure that the checkmark doesn't overlap with the element boxes, we need a
+        # checkmark base that keeps track of the base of the checkmark, or CHECKMARK_BASE.
+        CHECKMARK_Y = abs(len(lst)/3-i)*CHECKMARK_FRAGMENT_Y_DIFFERENCE + CHECKMARK_BASE
+        
+        # To align our checkmark properly, we need the checkmark fragment width to be the same
+        # as the box width.
+        pushMatrix()
+        translate(i*BOX_WIDTH + i*BOX_WIDTH_SPACING, -CHECKMARK_Y, 0)
+        box(BOX_WIDTH, CHECKMARK_HEIGHT, BOX_DEPTH)
+        popMatrix()
+            
+            
+            
         
     try:
         sorter.next()
